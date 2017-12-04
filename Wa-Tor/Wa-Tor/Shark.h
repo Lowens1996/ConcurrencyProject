@@ -35,7 +35,6 @@ public:
 	{
 		Col = col;
 	}
-
 	//Getter Methods 
 	int getStarveCount()
 	{

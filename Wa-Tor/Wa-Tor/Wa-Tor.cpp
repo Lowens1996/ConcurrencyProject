@@ -13,70 +13,191 @@
 #include <ctime>
 using namespace std;
 
-vector<Shark> MoveShark(vector<Shark>& sTracker, vector<Fish>& fTracker)
-{
-	int i = 0;
-	int i2 = 0;
+char(*Move(vector<Shark>& sTracker, vector<Fish>& fTracker, char type, char grid[][50], size_t sz))[50]
+{//This changes objects positions in the grid & checks for collions between positions beofre moving
+	int i;
+	char move;
 	int sRow;
-	int sCol = 0;
-	int fRow = 0;
-	int fCol = 0;
-	bool move_up = true;
-	bool move_down= true;
-	bool move_right = true;
-	bool move_left = true;
+	int sCol;
+	int fRow;
+	int fCol;
+	int movePos = 0;
+	bool newPos = false;
+	srand(time(NULL));
 
-	for (i = 0; i < sTracker.size(); i++)
+	if (type == 's')
 	{
-		sRow = sTracker[i].getRow();
-		cout << "shark row " << sRow << endl;
-		sCol = sTracker[i].getCol();
-
-		for (i2 = 0; i2 < fTracker.size(); i2++)
+		for (i = 0; i < sTracker.size(); i++)
 		{
-			fRow = fTracker[i2].getRow();
-			cout << "fish row " << fRow << endl;
-			fCol = fTracker[i2].getCol(); 
-			if (fRow = sRow + 1 && fCol = sCol)
-			{
-				bool move_up = false;
-			}
+			sRow = sTracker[i].getRow();
+			sCol = sTracker[i].getCol();
 
+			while (newPos == false)//keep trying to find a new position untill one is found 
+			{
+				movePos = rand() % 4;//random neumber between 0-4
+				switch (movePos)
+				{
+				case 0:
+					if (grid[sRow + 1][sCol] == '_' && sRow + 1 < 20)
+					{
+						move = 'D';//move down
+						newPos = true;//break while loop
+					}
+					else { newPos = false; }
+					cout << "shark down broke";
+					break;
+				case 1:
+					if (grid[sRow - 1][sCol] == '_' && sRow - 1 >= 0)
+					{
+						move = 'U';
+						newPos = true;
+					}
+					else { newPos = false; }
+					cout << "shark up broke";
+					break;
+				case 2:
+					if (grid[sRow][sCol - 1] == '_' && sCol - 1 >= 0)
+					{
+						move = 'L';
+						newPos = true;
+					}
+					else { newPos = false; }
+					cout << "shark left broke";
+					break;
+				case 3:
+					if (grid[sRow][sCol + 1] == '_' && sCol + 1 > 50)
+					{
+						move = 'R';
+						newPos = true;
+					}
+					else { newPos = false; }
+					cout << "shark right broke";
+					break;
+				case 4:
+					move = 'C';
+					newPos = true;
+					break;
+				}
+			}
+			switch (move)
+			{
+			case 'D':
+				grid[sRow][sCol] = '_';
+				grid[sRow + 1][sCol] = 'S';
+				sTracker[i].setRow(sRow + 1);
+				break;
+			case 'U':
+				grid[sRow][sCol] = '_';
+				grid[sRow - 1][sCol] = 'S';
+				sTracker[i].setRow(sRow - 1);
+				break;
+			case 'L':
+				grid[sRow][sCol] = '_';
+				grid[sRow][sCol - 1] = 'S';
+				sTracker[i].setCol(sCol - 1);
+				break;
+			case 'R':
+				grid[sRow][sCol] = '_';
+				grid[sRow][sCol + 1] = 'S';
+				sTracker[i].setRow(sCol + 1);
+				break;
+			case 'C':
+				break;
+			}
 		}
 	}
-
-	return sTracker;
-}
-void Print(char grid[20][50], int row, int col, vector<Shark>& sTracker, vector<Fish>& fTracker)
-{
-	int i = 0;
-	int sRow = 0;
-	int sCol = 0;
-	int fRow = 0;
-	int fCol = 0;
-	for (row = 0; row < 20; row++)
+	//************FISH********************
+	if (type == 'f')
 	{
-		for (col = 0; col < 50; col++)
+		for (i = 0; i < fTracker.size(); i++)
 		{
-			for (i = 0; i < sTracker.size(); i++)
+			fRow = fTracker[i].getRow();
+			fCol = fTracker[i].getCol();
+
+			while (newPos == false)
 			{
-				sRow = sTracker[i].getRow();
-				sCol = sTracker[i].getCol();
-				if (sRow == row && sCol == col)
+				movePos = rand() % 5;
+				switch (movePos)
 				{
-					grid[row][col] = 'S';
+				case 0:
+					if (grid[fRow + 1][fCol] == '_' && fRow + 1 < 20)
+					{
+						move = 'D';
+						newPos = true;
+					}
+					else { newPos = false; }
+					cout << "fish down broke";
+					break;
+				case 1:
+					if (grid[fRow - 1][fCol] == '_' && fRow - 1 >= 0)
+					{
+						move = 'U';
+						newPos = true;
+					}
+					else { newPos = false; }
+					cout << "fish up broke";
+					break;
+				case 2:
+					if (grid[fRow][fCol - 1] == '_' && fCol - 1 >= 0)
+					{
+						move = 'L';
+						newPos = true;
+					}
+					else { newPos = false; }
+					cout << "fish left broke";
+					break;
+				case 3:
+					if (grid[fRow][fCol + 1] == '_' && fCol + 1 > 50)
+					{
+						move = 'R';
+						newPos = true;
+					}
+					else { newPos = false; }
+					cout << "fish right broke";
+					break;
+				case 4:
+					move = 'C';
+					newPos = true;
+					break;
+
 				}
 			}
-			for (i = 0; i < fTracker.size(); i++)
+			switch (move)
 			{
-				fRow = fTracker[i].getRow();
-				fCol = fTracker[i].getCol();
-				if (fRow == row && fCol == col)
-				{
-					grid[row][col] = 'F';
-				}
+			case 'D':
+				grid[fRow][fCol] = '_';
+				grid[fRow + 1][fCol] = 'F';
+				fTracker[i].setRow(fRow + 1);
+				break;
+			case 'U':
+				grid[fRow][fCol] = '_';
+				grid[fRow - 1][fCol] = 'F';
+				fTracker[i].setRow(fRow - 1);
+				break;
+			case 'L':
+				grid[fRow][fCol] = '_';
+				grid[fRow][fCol - 1] = 'F';
+				fTracker[i].setCol(fCol - 1);
+				break;
+			case 'R':
+				grid[fRow][fCol] = '_';
+				grid[fRow][fCol + 1] = 'F';
+				fTracker[i].setRow(fCol + 1);
+				break;
+			case 'C':
+				break;
 			}
-			cout << grid[row][col];
+		}
+	}
+	return grid;
+}
+void Print(char grid[20][50])
+{
+	for (int r = 0; r < 20; r++)
+	{
+		for (int c = 0; c < 50; c++)
+		{
+			cout << grid[r][c];
 		}
 		cout << endl;
 	}
@@ -88,8 +209,8 @@ int main()
 	srand(time(NULL));
 	int i = 0;
 	int Timer = 500;
-	int NumShark = 5; //start number of sharks 
-	int NumFish = 20; //start number of fish 
+	int NumShark = 10; //start number of sharks 
+	int NumFish = 30; //start number of fish 
 	int SharkBreed = 25; //Number of iterations before shark can breed 
 	int FishBreed = 10; //Number of iterations before fish can breed 
 	int starve = 4; //Number of iterations before shark starves and is deleted from vector 
@@ -97,12 +218,14 @@ int main()
 	char space = ' ';//Used for insertion into Grid
 	int col = 0;  //Used for insertion into Grid
 	int row = 0;  //Used for insertion into Grid
-	string shark = "s"; //Used for sending to functions to ecxexute function on either fish or sharks 
-	string fish = "f";  //Used for sending to functions to ecxexute function on either fish or sharks 
+	char shark = 's'; //Used for sending to functions to ecxexute function on either fish or sharks 
+	char fish = 'f';  //Used for sending to functions to ecxexute function on either fish or sharks 
 	vector<Shark>sharkTracker; //Holds all current Shark objects and their details (e.g. position)
 	vector<Fish>fishTracker;  //Holds all current Shark objects and their details (e.g. position)
 	vector<Shark>::iterator itS;  // declare an iterator Shark vector
 	vector<Fish>::iterator itF;  // declare an iterator Shark vector
+	int fishCount = 0;
+	int sharkCount = 0;
 
 	//Intialize grid to be empty 
 	for (row = 0; row < 20; row++)
@@ -122,6 +245,7 @@ int main()
 			space = grid[row][col];
 			if (space = '_')
 			{
+				grid[row][col] = 'S';
 				Shark s(starve, SharkBreed, row, col); //Create shark object 
 				sharkTracker.push_back(s); //add to tracker 
 				slot = 'E';
@@ -139,6 +263,7 @@ int main()
 			space = grid[row][col];
 			if (space = '_')
 			{
+				grid[row][col] = 'F';
 				Fish f(FishBreed, row, col); //Create shark object 
 				fishTracker.push_back(f); //add to tracker 
 				slot = 'E';
@@ -146,13 +271,17 @@ int main()
 		}
 		slot = ' ';
 	}
-	
-		MoveShark(sharkTracker, fishTracker);
-	
-		//Print(grid, row, col, sharkTracker, fishTracker);
-		//system("CLS");
-	
-		
+	//Life Cycle 
+	for (i = 0; i < 100; i++)
+	{
+		system("CLS");
+		char(*ptGrids)[50] = Move(sharkTracker,fishTracker,shark,grid,20);
+		char(*ptGridf)[50] = Move(sharkTracker, fishTracker, fish, grid, 20);
+		Print(grid);
+	}
+	cout << endl;
+	Print(grid);
+
 	cin.get();
     return 0;
 }

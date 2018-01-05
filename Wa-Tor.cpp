@@ -35,20 +35,22 @@ char(*Move(vector<Shark>& sTracker, vector<Fish>& fTracker, char type, char grid
 		{
 			sRow = sTracker[i].getRow();
 			sCol = sTracker[i].getCol();
+			movePos = rand() % 3;//randomly choose movement 
 
 			while (newPos == false)//keep trying to find a new position untill one is found 
 			{
-				movePos = rand() % 3;//random neumber between 0-4
-				
 				//*************** DOWN ******************
 				if (movePos == 0 && Down != false) //check randomised number and if down has been checked already
 				{
-					if (grid[sRow + 1][sCol] == '_' && sRow + 1 < 20) //check if shark can move down 
+					if (sRow < 19)
 					{
-						move = 'D';//move down
-						newPos = true;//break while loop
+						if (grid[sRow + 1][sCol] == '_') //check if shark can move down 
+						{
+							move = 'D';//move down
+							newPos = true;//break while loop
+						}
 					}
-					else if (sRow + 1 > 19)
+					else if (sRow == 19)
 					{
 						if (grid[0][sCol] == '_') //check if shark can wrap back around 
 						{
@@ -58,18 +60,22 @@ char(*Move(vector<Shark>& sTracker, vector<Fish>& fTracker, char type, char grid
 							move = '-';
 							newPos = true;
 						}
-						else { Down = false; } //If it cant do either this movement cant be made and is set to false 
 					}
+					else { Down = false; } //If it cant do either this movement cant be made and is set to false 
 				}
 				//*************** UP ******************
 				if (movePos == 1 && Up != false) 
 				{
-					if (grid[sRow - 1][sCol] == '_' && sRow - 1 >= 0)
+					if (sRow > 0)
 					{
-						move = 'U';//move up
-						newPos = true;//break while loop
+						if (grid[sRow - 1][sCol] == '_')
+						{
+							//cout << "move up" << endl;
+							move = 'U';//move up
+							newPos = true;//break while loop
+						}
 					}
-					else if (sRow - 1 < 0)
+					else if (sRow == 0)
 					{
 						if (grid[19][sCol] == '_')
 						{
@@ -79,18 +85,22 @@ char(*Move(vector<Shark>& sTracker, vector<Fish>& fTracker, char type, char grid
 							move = '-';
 							newPos = true;
 						}
-						else { Up = false; }
 					}
+					else { Up = false; }
 				}
 				//*************** LEFT ******************
 				if (movePos == 2 && Left != false) 
 				{
-					if (grid[sRow][sCol - 1] == '_' && sCol - 1 >= 0)
+					if (sCol > 0)
 					{
-						move = 'L';//move left
-						newPos = true;//break while loop
+						if (grid[sRow][sCol - 1] == '_')
+						{
+							//cout << "move left" << endl;
+							move = 'L';//move left
+							newPos = true;//break while loop
+						}
 					}
-					else if (sCol - 1 < 0)
+					else if (sCol == 0)
 					{
 						if (grid[sRow][49] == '_')
 						{
@@ -100,29 +110,33 @@ char(*Move(vector<Shark>& sTracker, vector<Fish>& fTracker, char type, char grid
 							move = '-';
 							newPos = true;
 						}
-						else { Left = false; }
 					}
+					else { Left = false; }
 				}
 				//*************** RIGHT ******************
 				if (movePos == 3 && Right != false) 
 				{
-					if (grid[sRow][sCol + 1] == '_' && sCol + 1 < 50)
+					if (sCol < 49)
 					{
-						move = 'R';//move right
-						newPos = true;//break while loop
+						if (grid[sRow][sCol + 1] == '_')
+						{
+							//cout << "move right" << endl;
+							move = 'R';//move right
+							newPos = true;//break while loop
+						}
 					}
-					else if (sCol + 1 > 49)
+					else if (sCol == 49)
 					{
 						if (grid[sRow][0] == '_')
 						{
 							grid[sRow][sCol] = '_';
-							grid[sRow][49] = 'S';
+							grid[sRow][0] = 'S';
 							sTracker[i].setCol(0);
 							move = '-';
 							newPos = true;
 						}
-						else { Right = false; }
 					}
+					else { Right = false; }
 				}
 				//*************** CANT MOVE ******************
 				else if(Down == false && Up == false && Left == false && Right == false)
@@ -130,38 +144,42 @@ char(*Move(vector<Shark>& sTracker, vector<Fish>& fTracker, char type, char grid
 					move = 'C';
 					newPos = true;
 				}
+				movePos = rand() % 3;//randomly choose movement 
 			}
 			switch (move)
 			{
 			case 'D':
+				//cout << " switch move down" << endl;
 				grid[sRow][sCol] = '_';
 				grid[sRow + 1][sCol] = 'S';
 				sTracker[i].setRow(sRow + 1);
 				break;
 			case 'U':
+				//cout << "switch move up" << endl;
 				grid[sRow][sCol] = '_';
 				grid[sRow - 1][sCol] = 'S';
 				sTracker[i].setRow(sRow - 1);
 				break;
 			case 'L':
+				//cout << "switch move left" << endl;
 				grid[sRow][sCol] = '_';
 				grid[sRow][sCol - 1] = 'S';
 				sTracker[i].setCol(sCol - 1);
 				break;
 			case 'R':
+				//cout << "switch move right" << endl;
 				grid[sRow][sCol] = '_';
 				grid[sRow][sCol + 1] = 'S';
 				sTracker[i].setRow(sCol + 1);
 				break;
 			case 'C':
 				break;
-			case '-':
-				break;
 			}
 			Down = true;
 			Up = true;
 			Left = true;
 			Right = true;
+			newPos = false;
 		}
 	}
 	//************FISH********************
@@ -171,40 +189,114 @@ char(*Move(vector<Shark>& sTracker, vector<Fish>& fTracker, char type, char grid
 		{
 			fRow = fTracker[i].getRow();
 			fCol = fTracker[i].getCol();
+			movePos = rand() % 3;//randomly choose movement 
 
-			while (newPos == false)
+			while (newPos == false)//keep trying to find a new position untill one is found 
 			{
-				movePos = rand() % 3;
-			
-					if (movePos == 0 && grid[fRow + 1][fCol] == '_' && fRow + 1 < 20)
+				//*************** DOWN ******************
+				if (movePos == 0 && Down != false) //check randomised number and if down has been checked already
+				{
+					if (fRow < 19)
 					{
-						move = 'D';
-						newPos = true;
+						if (grid[fRow + 1][fCol] == '_') //check if fish can move down 
+						{
+							move = 'D';//move down
+							newPos = true;//break while loop
+						}
 					}
-					
-					else if (movePos == 1 && grid[fRow - 1][fCol] == '_' && fRow - 1 >= 0)
+					else if (fRow == 19)
 					{
-						move = 'U';
-						newPos = true;
+						if (grid[0][fCol] == '_') //check if fish can wrap back around 
+						{
+							grid[fRow][fCol] = '_';
+							grid[0][fCol] = 'F';
+							fTracker[i].setRow(0);
+							move = '-';
+							newPos = true;
+						}
 					}
-				
-					else if (movePos == 2 && grid[fRow][fCol - 1] == '_' && fCol - 1 >= 0)
+					else { Down = false; } //If it cant do either this movement cant be made and is set to false 
+				}
+				//*************** UP ******************
+				if (movePos == 1 && Up != false)
+				{
+					if (fRow > 0)
 					{
-						move = 'L';
-						newPos = true;
+						if (grid[fRow - 1][fCol] == '_')
+						{
+							//cout << "move up" << endl;
+							move = 'U';//move up
+							newPos = true;//break while loop
+						}
 					}
-			
-					else if (movePos == 3 && grid[fRow][fCol + 1] == '_' && fCol + 1 > 50)
+					else if (fRow == 0)
 					{
-						move = 'R';
-						newPos = true;
+						if (grid[19][fCol] == '_')
+						{
+							grid[fRow][fCol] = '_';
+							grid[19][fCol] = 'F';
+							fTracker[i].setRow(19);
+							move = '-';
+							newPos = true;
+						}
 					}
-					
-					else
+					else { Up = false; }
+				}
+				//*************** LEFT ******************
+				if (movePos == 2 && Left != false)
+				{
+					if (fCol > 0)
 					{
-						move = 'C';
-						newPos = true;
+						if (grid[fRow][fCol - 1] == '_')
+						{
+							move = 'L';//move left
+							newPos = true;//break while loop
+						}
 					}
+					else if (fCol == 0)
+					{
+						if (grid[fRow][49] == '_')
+						{
+							grid[fRow][fCol] = '_';
+							grid[fRow][49] = 'F';
+							fTracker[i].setCol(49);
+							move = '-';
+							newPos = true;
+						}
+					}
+					else { Left = false; }
+				}
+				//*************** RIGHT ******************
+				if (movePos == 3 && Right != false)
+				{
+					if (fCol < 49)
+					{
+						if (grid[fRow][fCol + 1] == '_')
+						{
+							move = 'R';//move right
+							newPos = true;//break while loop
+						}
+					}
+					else if (fCol == 49)
+					{
+						if (grid[fRow][0] == '_')
+						{
+							grid[fRow][fCol] = '_';
+							grid[fRow][0] = 'F';
+							fTracker[i].setCol(0);
+							move = '-';
+							newPos = true;
+						}
+					}
+					else { Right = false; }
+				}
+				//*************** CANT MOVE ******************
+				else if (Down == false && Up == false && Left == false && Right == false)
+				{
+					move = 'C';
+					newPos = true;
+				}
+				movePos = rand() % 3;//randomly choose movement 
 			}
 			switch (move)
 			{
@@ -231,8 +323,14 @@ char(*Move(vector<Shark>& sTracker, vector<Fish>& fTracker, char type, char grid
 			case 'C':
 				break;
 			}
+			Down = true;
+			Up = true;
+			Left = true;
+			Right = true;
+			newPos = false;
 		}
 	}
+	//********************
 	return grid;
 }
 void Print(char grid[20][50])
@@ -253,7 +351,7 @@ int main()
 	srand(time(NULL));
 	int i = 0;
 	int Timer = 500;
-	int NumShark = 20; //start number of sharks 
+	int NumShark = 5; //start number of sharks 
 	int NumFish = 10; //start number of fish 
 	int SharkBreed = 25; //Number of iterations before shark can breed 
 	int FishBreed = 10; //Number of iterations before fish can breed 
@@ -318,19 +416,19 @@ int main()
 	//Life Cycle 
 	for (i = 0; i < 50; i++)
 	{
-		char(*ptGrids)[50] = Move(sharkTracker,fishTracker,shark,grid,20);
-		//char(*ptGridf)[50] = Move(sharkTracker, fishTracker, fish, grid, 20);
-		Print(grid);
 		system("CLS");
+		char(*ptGrids)[50] = Move(sharkTracker,fishTracker,shark,grid,20);
+		char(*ptGridf)[50] = Move(sharkTracker, fishTracker, fish, grid, 20);
+		Print(grid);
 	}
-	//cout << "FISH:" << endl;
-	//for (i = 0; i < fishTracker.size(); i++)
-	//{
-	//	row = fishTracker[i].getRow();
-	//	col = fishTracker[i].getCol();
-	//	cout << row << endl;
-	//	cout << col << endl;
-	//}
+	cout << "FISH:" << endl;
+	for (i = 0; i < fishTracker.size(); i++)
+	{
+		row = fishTracker[i].getRow();
+		col = fishTracker[i].getCol();
+		cout << row << endl;
+		cout << col << endl;
+	}
 	cout << "SHARK:" << endl;
 	for (i = 0; i < sharkTracker.size(); i++)
 	{

@@ -350,11 +350,13 @@ int main()
 	char grid[20][50];//Wa-Tor World 
 	srand(time(NULL));
 	int i = 0;
-	int Timer = 500;
+	int Timer = 50;
 	int NumShark = 5; //start number of sharks 
 	int NumFish = 10; //start number of fish 
-	int SharkBreed = 25; //Number of iterations before shark can breed 
-	int FishBreed = 10; //Number of iterations before fish can breed 
+	int SharkBreed = 6; //Number of iterations before shark can breed 
+	int FishBreed = 2; //Number of iterations before fish can breed
+	int sharkTime = 0;
+	int fishTime = 0;
 	int starve = 4; //Number of iterations before shark starves and is deleted from vector 
 	char slot = ' '; //Used for insertion into Grid
 	char space = ' ';//Used for insertion into Grid
@@ -364,10 +366,6 @@ int main()
 	char fish = 'f';  //Used for sending to functions to ecxexute function on either fish or sharks 
 	vector<Shark>sharkTracker; //Holds all current Shark objects and their details (e.g. position)
 	vector<Fish>fishTracker;  //Holds all current Shark objects and their details (e.g. position)
-	vector<Shark>::iterator itS;  // declare an iterator Shark vector
-	vector<Fish>::iterator itF;  // declare an iterator Shark vector
-	int fishCount = 0;
-	int sharkCount = 0;
 
 	//Intialize grid to be empty 
 	for (row = 0; row < 20; row++)
@@ -414,30 +412,55 @@ int main()
 		slot = ' ';
 	}
 	//Life Cycle 
-	for (i = 0; i < 50; i++)
+	for (i = 0; i < Timer; i++)
 	{
 		system("CLS");
 		char(*ptGrids)[50] = Move(sharkTracker,fishTracker,shark,grid,20);
 		char(*ptGridf)[50] = Move(sharkTracker, fishTracker, fish, grid, 20);
+		sharkTime++;
+		fishTime++;
+		if (sharkTime == SharkBreed)
+		{
+			while (slot != 'E')//find position in grid for new shark object
+			{
+				row = rand() % 19;
+				col = rand() % 49;
+				space = grid[row][col];
+				if (space = '_')
+				{
+					grid[row][col] = 'S';
+					Shark s(starve, SharkBreed, row, col); //Create shark object 
+					sharkTracker.push_back(s); //add to tracker 
+					NumShark++;
+					sharkTime = 0;
+					slot = 'E';
+				}
+			}
+			slot = ' ';
+		}
+		if (fishTime == FishBreed)
+		{
+			while (slot != 'E')//find position in grid for new fish object
+			{
+				row = rand() % 19;
+				col = rand() % 49;
+				space = grid[row][col];
+				if (space = '_')
+				{
+					grid[row][col] = 'F';
+					Fish f(FishBreed, row, col); //Create shark object 
+					fishTracker.push_back(f); //add to tracker 
+					NumFish++;
+					fishTime = 0;
+					slot = 'E';
+				}
+			}
+			slot = ' ';
+		}
 		Print(grid);
+		cout << endl;
+		cout << "Number of Fish: " << NumFish << ' ' << "Number of Sharks: " << NumShark;
 	}
-	cout << "FISH:" << endl;
-	for (i = 0; i < fishTracker.size(); i++)
-	{
-		row = fishTracker[i].getRow();
-		col = fishTracker[i].getCol();
-		cout << row << endl;
-		cout << col << endl;
-	}
-	cout << "SHARK:" << endl;
-	for (i = 0; i < sharkTracker.size(); i++)
-	{
-		row = sharkTracker[i].getRow();
-		col = sharkTracker[i].getCol();
-		cout << row << endl;
-		cout << col << endl;
-	}
-
 	cin.get();
     return 0;
 }
